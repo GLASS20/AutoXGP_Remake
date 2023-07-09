@@ -1,5 +1,7 @@
 package me.liycxc.steps;
 
+import org.openqa.selenium.firefox.FirefoxDriver;
+
 /**
  * This file is part of AutoXGP Remake project.
  * Copyright 2023 Liycxc
@@ -10,7 +12,8 @@ package me.liycxc.steps;
  * @time: 13:13
  */
 public class Microsoft {
-    public void microsoftLogin(String[] account) {
-
+    public static boolean microsoftLogin(String[] account) {
+        // 获取浏览器
+        FirefoxDriver driver = new FirefoxDriver();
     }
 }
