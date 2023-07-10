@@ -1,15 +1,12 @@
 package me.liycxc.steps;
 
-import com.sun.source.tree.BreakTree;
 import me.liycxc.Main;
 import me.liycxc.driver.Driver;
-import me.liycxc.utils.Waiter;
+import me.liycxc.driver.Waiter;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
-import org.openqa.selenium.firefox.FirefoxDriver;
 import org.openqa.selenium.support.ui.ExpectedConditions;
-import org.openqa.selenium.support.ui.Wait;
 import org.openqa.selenium.support.ui.WebDriverWait;
 
 import java.util.Random;
@@ -26,7 +23,7 @@ import java.util.Random;
 public class Alipay {
     public static boolean alipayLogin() {
         // 获取浏览器
-        FirefoxDriver driver = Driver.getDriver();
+        WebDriver driver = Driver.getDriver();
 
         // 打开支付宝登录网页
         driver.get(Main.ALIPAY_URL);
@@ -62,7 +59,7 @@ public class Alipay {
                 for (char c : Main.ALIPAY_USER.toCharArray()) {
                     int delay = new Random().nextInt(300) + 50;
                     // 模拟输入延迟
-                    driverWait.wait(delay);
+                    Thread.sleep(delay);
 
                     // 输入字符
                     element.sendKeys(String.valueOf(c));
@@ -78,7 +75,7 @@ public class Alipay {
                 for (char c : Main.ALIPAY_PWD.toCharArray()) {
                     int delay = new Random().nextInt(300) + 50;
                     // 模拟输入延迟
-                    driverWait.wait(delay);
+                    Thread.sleep(delay);
 
                     // 输入字符
                     element.sendKeys(String.valueOf(c));
@@ -88,16 +85,19 @@ public class Alipay {
                 element = driverWait.until(ExpectedConditions.presenceOfElementLocated(By.xpath("//input[@id='J-login-btn']")));
 
                 // 模拟点击延迟
-                driver.wait(600);
+                Thread.sleep(600);
 
                 // 点击登录
                 element.click();
 
                 // 等待页面加载
-                driver.wait(1200);
+                Thread.sleep(1200);
             } catch (Exception exception) {
                 exception.printStackTrace();
             }
+
+            // 重新加载页面
+            driver.navigate().refresh();
 
             // 登录次数增加
             counter++;

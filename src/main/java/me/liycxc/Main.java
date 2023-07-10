@@ -25,7 +25,7 @@ public class Main {
     // YX Get api
     public static String YX_ID = null;
     public static String YX_TOKEN = null;
-    public static String YX_API = "https://api.yx1024.net/getAccountApi.aspx?uid=56264&type=" + YX_ID + "&token=" + YX_TOKEN + "&count=1";
+    public static String YX_API = null;
 
     // Microsoft Live
     public static String LIVE_URL = "https://login.live.com";
@@ -33,7 +33,7 @@ public class Main {
     public static String LIVE_PWD = null;
 
     // Xbox Game Pass
-    public static String XGP_URL = "https://www.xbox.com/zh-HK/xbox-game-pass/pc-game-pass?xr=shellnav";
+    public static String XGP_URL = "https://www.xbox.com/zh-HK/games/store/pc-game-pass-pc-1/CFQ7TTC0KGQ8/0002";
 
     // Minecraft
     public static String MC_PLAYERID = null;
@@ -55,6 +55,7 @@ public class Main {
         ALIPAY_KEY = args[3];
         YX_ID = args[4]; // 69 or 70
         YX_TOKEN = args[5];
+        YX_API = "https://api.yx1024.net/getAccountApi.aspx?uid=56264&type=" + YX_ID + "&token=" + YX_TOKEN + "&count=1";
         run();
     }
 

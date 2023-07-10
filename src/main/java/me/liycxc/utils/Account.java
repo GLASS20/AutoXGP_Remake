@@ -10,20 +10,16 @@ import org.apache.http.conn.ssl.NoopHostnameVerifier;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClients;
 import org.apache.http.ssl.SSLContexts;
-import org.apache.http.ssl.TrustStrategy;
 import org.apache.http.util.EntityUtils;
 
 import javax.net.ssl.SSLContext;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
-import java.io.FileWriter;
 import java.net.URI;
 import java.security.KeyManagementException;
 import java.security.KeyStoreException;
 import java.security.NoSuchAlgorithmException;
-import java.security.cert.CertificateException;
-import java.security.cert.X509Certificate;
 
 /**
  * This file is part of AutoXGP Remake project.
@@ -38,62 +34,29 @@ public class Account {
     public static File locAcc = new File("locAcc.txt");
 
     public static String[] getLocAcc() {
-        String[] acc = new String[]{null,null};
+        String[] account = new String[]{null, null};
+
         try {
-            BufferedReader reader = new BufferedReader(new FileReader(locAcc));
-            FileWriter writer = new FileWriter("tempLocAcc.txt", true);
-            String line;
-
-            while ((line = reader.readLine()) != null) {
-                String[] data = line.split(":");
-                if (data.length == 2) {
-                    String email = data[0];
-                    String password = data[1];
-                    System.out.println("Email: " + email);
-                    System.out.println("Password: " + password);
-                    acc[0] = email;
-                    acc[1] = password;
-                    // 删除该行数据，将其写入临时文件
-                    writer.write("");
-                }
+            if (!locAcc.exists()) {
+                locAcc.createNewFile();
             }
 
-            reader.close();
-            writer.close();
-
-            // 删除原文件
-            if (!locAcc.delete()) {
-                System.out.println("Failed to delete file");
+            BufferedReader bufferedReader = new BufferedReader(new FileReader(locAcc));
+            String str = bufferedReader.readLine();
+            if (str.contains(":") || str.contains("----")) {
+                account = str.split("\\|+|-{4}");
             }
-            // 重命名临时文件为原文件名
-            if (!new File("tempLocAcc.txt").renameTo(locAcc)) {
-                System.out.println("Failed to rename file");
-            }
-
-            // 检查文件是否为空，如果为空输出"NoData"
-            BufferedReader tempReader = new BufferedReader(new FileReader(locAcc));
-            if (tempReader.readLine() == null) {
-                acc[0] = null;
-                acc[1] = null;
-            }
-            tempReader.close();
-
-        } catch (Exception e) {
-            e.printStackTrace();
+            bufferedReader.close();
+        } catch (Exception exception) {
         }
 
-        return acc;
+        return account;
     }
 
     public static String[] getMailByApi() {
         SSLContext sslContext = null;
         try {
-            sslContext = SSLContexts.custom().loadTrustMaterial(null, new TrustStrategy() {
-                @Override
-                public boolean isTrusted(X509Certificate[] x509Certificates, String s) throws CertificateException {
-                    return true;
-                }
-            }).build();
+            sslContext = SSLContexts.custom().loadTrustMaterial(null, (x509Certificates, s) -> true).build();
         } catch (NoSuchAlgorithmException | KeyManagementException | KeyStoreException e) {
             e.printStackTrace();
         }

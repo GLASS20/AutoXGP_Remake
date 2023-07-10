@@ -1,14 +1,14 @@
 package me.liycxc.driver;
 
-import me.liycxc.Main;
-import org.openqa.selenium.PageLoadStrategy;
-import org.openqa.selenium.firefox.FirefoxDriver;
-import org.openqa.selenium.firefox.FirefoxOptions;
-import org.openqa.selenium.firefox.FirefoxProfile;
+import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.chrome.ChromeDriver;
+import org.openqa.selenium.chrome.ChromeDriverService;
+import org.openqa.selenium.chrome.ChromeOptions;
+import org.openqa.selenium.remote.service.DriverService;
 
-import java.io.File;
+import java.io.OutputStream;
+import java.time.Duration;
 import java.util.HashMap;
-import java.util.Map;
 
 /**
  * This file is part of AutoXGP Remake project.
@@ -20,13 +20,13 @@ import java.util.Map;
  * @time: 13:14
  */
 public class Driver {
-    private static FirefoxDriver driver;
+    private static WebDriver driver;
 
-    public static FirefoxDriver getDriver() {
+    public static WebDriver getDriver() {
         return driver;
     }
 
-    public static void setDriver(FirefoxDriver newDriver) {
+    public static void setDriver(WebDriver newDriver) {
         driver = newDriver;
     }
 
@@ -34,25 +34,38 @@ public class Driver {
         System.setProperty("webdriver.chrome.driver", "chromedriver.exe");
         System.setProperty("webdriver.gecko.driver", "geckodriver.exe");
 
-        FirefoxDriver driver;
-        FirefoxOptions options = new FirefoxOptions();
-        FirefoxProfile firefoxProfile = new FirefoxProfile(new File(Main.DRIVER_PROFILE));
-        firefoxProfile.setPreference("general.useragent.override", "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/114.0.0.0 Safari/537.36 Edg/114.0.1823.58");
-        // 绕过支付宝爬虫检测 FireFox 版本 < 88 推荐使用87
-        firefoxProfile.setPreference("dom.webdriver.enabled", false);
-        firefoxProfile.setPreference("useAutomationExtension", false);
-        options.setPageLoadStrategy(PageLoadStrategy.NORMAL);
-        // 无头模式
-        // options.addArguments("--headless");
+        HashMap<String, Object> prefs = new HashMap<>();
+        prefs.put("credentials_enable_service", false);
+        prefs.put("profile.password_manager_enabled", false);
+        ChromeOptions options = new ChromeOptions();
+        options.setExperimentalOption("prefs", prefs);
+        String[] a = { "enable-automation" };
+        options.setExperimentalOption("excludeSwitches", a);
+        options.addArguments("--blink-settings=imagesEnabled=false");
+        options.addArguments("--disable-blink-features");
+        options.addArguments("--disable-blink-features=AutomationControlled");
+        options.addArguments("--window-size=1800,1200");
+        options.addArguments("--lang=en");
+        options.addArguments("--no-sandbox");
         options.addArguments("--disable-gpu");
-        options.addPreference("dom.webdriver.enabled", false);
-        options.addPreference("useAutomationExtension", false);
-        options.setProfile(firefoxProfile);
-        Map<String, Object> prefs = new HashMap<>();
-        prefs.put("intl.accept_languages", "en-US"); // 设置为英语（美国）语言片
-        options.setCapability("prefs", prefs);
+        options.addArguments("--disable-crash-reporter");
+        options.addArguments("--disable-extensions");
+        options.addArguments("--disable-in-process-stack-traces");
+        options.addArguments("--disable-logging");
+        options.addArguments("--disable-dev-shm-usage");
+        options.addArguments("--disable-build-check");
+        options.addArguments("--log-level=3");
+        options.addArguments("--remote-allow-origins=*");
+        options.addArguments("--user-agent=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/114.0.0.0 Safari/537.36");
+        // options.addArguments("--headless");
 
-        driver = new FirefoxDriver();
+        DriverService.Builder<ChromeDriverService, ChromeDriverService.Builder> serviceBuilder = new ChromeDriverService.Builder();
+        ChromeDriverService chromeDriverService = serviceBuilder.build();
+        chromeDriverService.sendOutputTo(OutputStream.nullOutputStream());
+        ChromeDriver driver = new ChromeDriver(chromeDriverService, options);
+
+        driver.manage().timeouts().implicitlyWait(Duration.ofSeconds(60));
+
         driver.manage().deleteAllCookies();
 
         setDriver(driver);

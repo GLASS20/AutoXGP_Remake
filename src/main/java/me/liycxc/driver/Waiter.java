@@ -1,6 +1,6 @@
-package me.liycxc.utils;
+package me.liycxc.driver;
 
-import org.openqa.selenium.firefox.FirefoxDriver;
+import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.support.ui.WebDriverWait;
 
 import java.time.Duration;
@@ -15,7 +15,7 @@ import java.time.Duration;
  * @time: 15:40
  */
 public class Waiter {
-    public static WebDriverWait getWaiter(FirefoxDriver driver) {
-        return  new WebDriverWait(driver, Duration.ofSeconds(60),  Duration.ofMillis(500));
+    public static WebDriverWait getWaiter(WebDriver driver) {
+        return  new WebDriverWait(driver, Duration.ofSeconds(20));
     }
 }
