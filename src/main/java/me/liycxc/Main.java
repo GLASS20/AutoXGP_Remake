@@ -38,6 +38,8 @@ public class Main {
     // Minecraft
     public static String MC_PLAYERID = null;
 
+    public static boolean DRIVER_HARDLESS = false;
+
 
     /** 程序启动函数
      * @param args 启动参数
@@ -56,6 +58,7 @@ public class Main {
         YX_ID = args[4]; // 69 or 70
         YX_TOKEN = args[5];
         YX_API = "https://api.yx1024.net/getAccountApi.aspx?uid=56264&type=" + YX_ID + "&token=" + YX_TOKEN + "&count=1";
+        DRIVER_HARDLESS = Boolean.parseBoolean(args[6]);
         run();
     }
 

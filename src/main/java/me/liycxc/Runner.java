@@ -1,7 +1,6 @@
 package me.liycxc;
 
 import me.liycxc.driver.Driver;
-import me.liycxc.steps.Alipay;
 import me.liycxc.steps.Microsoft;
 import me.liycxc.steps.Minecraft;
 import me.liycxc.steps.XboxGamePass;
@@ -27,11 +26,11 @@ public class Runner extends Thread {
                 Driver.initDriver();
 
                 // 登录支付宝
-                System.out.println("Alipay Login Start");
+/*                System.out.println("Alipay Login Start");
                 if(!Alipay.alipayLogin()) {
                     throw new Exception("Alipay Error");
                 }
-                System.out.println("Alipay Login Stopped");
+                System.out.println("Alipay Login Stopped");*/
 
                 // 获取本地微软账户
                 String[] account = Account.getLocAcc();
@@ -84,12 +83,6 @@ public class Runner extends Thread {
                 exitCode = 1;
                 break;
             }
-        }
-
-        try {
-            Driver.getDriver().quit();
-        } catch (Exception exception) {
-            exception.printStackTrace();
         }
 
         System.out.println("-------Thread Stopped-------");

@@ -4,14 +4,11 @@ import me.liycxc.Main;
 import me.liycxc.driver.Driver;
 import me.liycxc.driver.Waiter;
 import org.openqa.selenium.By;
-import org.openqa.selenium.Keys;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.interactions.Actions;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
-
-import java.time.Duration;
 
 /**
  * This file is part of AutoXGP Remake project.
@@ -99,93 +96,28 @@ public class Microsoft {
         // 获取浏览器
         WebDriver driver = Driver.getDriver();
 
-        // 获取WebDriverWait
-        WebDriverWait driverWait = Waiter.getWaiter(driver);
-
         try {
-            // 打开网页
-            driver.navigate().to("https://account.microsoft.com/services/pcgamepass/cancel?fref=billing-cancel");
+            driver.get("https://account.microsoft.com/services/pcgamepass/cancel?fref=billing-cancel");
+            driver.findElement(By.xpath("//button[@id='benefit-cancel']")).click();
 
-            // 等待网页加载
-            Thread.sleep(3000);
+            driver.findElement(By.xpath("//input[@aria-label='Cancel now and get refund']")).click();
+            driver.findElement(By.xpath("//button[@id='cancel-select-cancel']")).click();
+            driver.findElement(By.xpath("//button[@data-bi-id='confirm-resubscribe']"));
+            System.out.println("退订成功");
 
-            // 查找 Cancel subscription
-            WebElement element = driverWait.until(ExpectedConditions.presenceOfElementLocated(By.xpath("//button[@aria-label='Cancel subscription' and @data-bi-id='benefit-cancel' and @id='benefit-cancel']")));
+            while (true) {
+                try {
+                    driver.get("https://account.microsoft.com/billing/payments");
+                    driver.findElement(By.xpath("//button[@aria-label='Remove Alipay']")).click();
+                    driver.findElement(By.xpath("//span[text()='Remove']/..")).click();
 
-            // 点击 Cancel subscription
-            element.click();
-
-            Thread.sleep(500);
-
-            // 查找 Cancel now and get refund
-            element = driverWait.until(ExpectedConditions.presenceOfElementLocated(By.xpath("//input[@aria-label='Cancel now and get refund']")));
-
-            // 点击 Cancel now and get refund
-            element.click();
-
-            Thread.sleep(800);
-
-            // 查找 Cancel subscription (xbox)
-            element = driverWait.until(ExpectedConditions.presenceOfElementLocated(By.xpath("//button[@data-bi-id='xbox-cancel-select-cancel' and @id='cancel-select-cancel']")));
-
-            // 点击 Cancel subscription (xbox)
-            element.click();
-
-            // 等待页面刷新
-            Thread.sleep(3000);
-
-            // 设置标识符
-            element = driverWait.until(ExpectedConditions.presenceOfElementLocated(By.xpath("//h1[text()='Goodbye for now!']")));
-            System.out.println(element.getText());
-
-            Thread.sleep(1000);
-
-            // 打开网页
-            driver.navigate().to("https://account.microsoft.com/billing/payments?fref=home.drawers.payment-options.manage-payment");
-
-            // 等待网页加载
-            try {
-                WebElement check = new WebDriverWait(driver, Duration.ofSeconds(5), Duration.ofMillis(500)).until(ExpectedConditions.presenceOfElementLocated(By.xpath("//div[text()='Enter password']")));
-                System.out.println("2FA: " + check.isDisplayed());
-
-                element = driverWait.until(ExpectedConditions.presenceOfElementLocated(By.xpath("//input[@name='passwd']")));
-
-                Thread.sleep(500);
-
-                element.sendKeys(Main.LIVE_PWD);
-
-                Thread.sleep(200);
-
-                element.sendKeys(Keys.ENTER);
-
-                // 等待网页加载
-                Thread.sleep(1000);
-            } catch (Exception exception) {
-                System.out.println("No 2FA");
+                    driver.findElement(By.xpath("//span[text()='Alipay account has been removed from your account!']"));
+                    System.out.println("支付宝付款方式已移除");
+                    break;
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
             }
-
-            // 查找 Remove Alipay
-            element = driverWait.until(ExpectedConditions.presenceOfElementLocated(By.xpath("//button[@aria-label='Remove Alipay']")));
-
-            // 点击 Remove Alipay
-            element.click();
-
-            Thread.sleep(800);
-
-            // 查找 Remove (侧边栏)
-            element = driverWait.until(ExpectedConditions.presenceOfElementLocated(By.xpath("//span[text()='Remove']")));
-
-            Thread.sleep(800);
-
-            // 点击 Remove
-            element.click();
-
-            // 等待网页加载
-            Thread.sleep(3000);
-
-            // 设置标识符
-            element = driverWait.until(ExpectedConditions.presenceOfElementLocated(By.xpath("//span[text()='Alipay account has been removed from your account!']")));
-            System.out.println("Ok? " + element.isDisplayed());
 
             return true;
         } catch (Exception exception) {

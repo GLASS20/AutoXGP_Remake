@@ -1,5 +1,6 @@
 package me.liycxc.driver;
 
+import me.liycxc.Main;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.chrome.ChromeDriverService;
@@ -57,7 +58,9 @@ public class Driver {
         options.addArguments("--log-level=3");
         options.addArguments("--remote-allow-origins=*");
         options.addArguments("--user-agent=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/114.0.0.0 Safari/537.36");
-        // options.addArguments("--headless");
+        if (Main.DRIVER_HARDLESS) {
+            options.addArguments("--headless");
+        }
 
         DriverService.Builder<ChromeDriverService, ChromeDriverService.Builder> serviceBuilder = new ChromeDriverService.Builder();
         ChromeDriverService chromeDriverService = serviceBuilder.build();

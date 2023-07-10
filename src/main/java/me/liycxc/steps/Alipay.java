@@ -91,7 +91,7 @@ public class Alipay {
                 element.click();
 
                 // 等待页面加载
-                Thread.sleep(1200);
+                Thread.sleep(2500);
             } catch (Exception exception) {
                 exception.printStackTrace();
             }

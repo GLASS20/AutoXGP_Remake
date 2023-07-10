@@ -11,7 +11,7 @@ import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
 
 import java.time.Duration;
-import java.util.Random;
+import java.util.Set;
 
 /**
  * This file is part of AutoXGP Remake project.
@@ -37,118 +37,32 @@ public class XboxGamePass {
 
             WebElement element;
 
-            while (true) {
-                try {
-                    // 获取头像以登录Xbox
-                    element = driverWait.until(ExpectedConditions.presenceOfElementLocated(By.xpath("//div[@id='mectrl_headerPicture']")));
+            driver.findElement(By.xpath("//button[@aria-label='加入 PC Game Pass。每月 HK$29.00']")).click();
 
-                    // 点击头像
-                    element.click();
-
-                    break;
-                } catch (Exception exception) {
-                    exception.printStackTrace();
-                    driver.navigate().refresh();
-                    System.out.println("Try again...");
-                }
-
-                if (!"https://www.xbox.com/zh-HK/xbox-game-pass/pc-game-pass?xr=shellnav".equalsIgnoreCase(driver.getCurrentUrl())) {
-                    driver.get("https://www.xbox.com/zh-HK/xbox-game-pass/pc-game-pass?xr=shellnav");
-                }
+            WebElement createProfileButton = driver.findElement(By.xpath("//button[@id='inline-continue-control']"));
+            while (!createProfileButton.isEnabled()) {
+                driver.findElement(By.xpath("//button[@id='create-account-gamertag-suggestion-1']")).click();
+                Thread.sleep(1000);
             }
+            createProfileButton.click();
 
-            int index = 1;
-            do {
+            System.out.println("档案创建成功");
 
-                Thread.sleep(500);
-
-                try {
-                    // 查找名字
-                    element = driverWait.until(ExpectedConditions.presenceOfElementLocated(By.xpath("//button[@id='create-account-gamertag-suggestion-" + index + "']")));
-
-                    // 点击名字
-                    element.click();
-
-                    // 等待名字检测完成
-                    Thread.sleep(2500);
-
-                    // 名字合法
-                    if (driver.getPageSource().contains("<label for=\"create-account-gamertag-input\" dir=\"ltr\" id=\"create-account-gamertag-detail\" aria-live=\"assertive\">This will be your public name in the Xbox online community.</label>")) {
-                        break;
-                    } else {
-                        System.out.println("[警告] Xbox 档案名不合法！");
-                        if (index > 3) {
-                            throw new Exception("Xbox档案名没一个合法");
-                        }
-                        index++;
-                    }
-                } catch (Exception exception) {
-                    exception.printStackTrace();
-                }
-            } while (true);
-
-            Thread.sleep(500);
-
-            // 查找LET‘S GO
-            element = driverWait.until(ExpectedConditions.presenceOfElementLocated(By.xpath("//button[@id='inline-continue-control']")));
-
-            // 点击LET'S GO
-            element.click();
-
-            // 等待网页加载
-            Thread.sleep(2500);
-
-            // 获取JavaScript跳转链接
-            int counter = 0;
-            while (true) {
-                try {
-                    element = driverWait.until(ExpectedConditions.presenceOfElementLocated(By.xpath("//a[@href='JavaScript:void(0);' and @role='button' and @class='c-call-to-action c-glyph xbstorebuy xbstoreDynAdd storeDynAdded']")));
-                    break;
-                } catch (Exception exception) {
-                    driver.navigate().refresh();
-                    counter++;
-                }
-                if (counter > 10) {
-                    throw new Exception("等待链接过久");
-                }
-                Thread.sleep(500);
-            }
-
-            // 点击跳转链接
-            element.click();
-
-            Thread.sleep(500);
-
-            // 查找下一步
-            element = driverWait.until(ExpectedConditions.presenceOfElementLocated(By.xpath("//button[@aria-label='下一步']")));
-
-            // 点击下一步
-            element.click();
+            driver.findElement(By.xpath("//button[@aria-label='加入 PC Game Pass。每月 HK$29.00']")).click();
 
             // 等待网页加载
             Thread.sleep(2500);
 
             // 转入iframe
-            while (true) {
-                try {
-                    driver.switchTo().frame("purchase-sdk-hosted-iframe");
-                    break;
-                } catch (Exception exception) {
-                    exception.printStackTrace();
-                }
-            }
-
-            Thread.sleep(1000);
+            driver.switchTo().frame("purchase-sdk-hosted-iframe");
 
             // 查找下一步
-            element = driverWait.until(ExpectedConditions.presenceOfElementLocated(By.xpath("//button[text()='下一步']")));
-
-            Thread.sleep(500);
+            element = driverWait.until(ExpectedConditions.presenceOfElementLocated(By.xpath("//button[contains(@class, 'optionContainer')]")));
 
             // 点击下一步
             element.click();
 
-            Thread.sleep(500);
+            Thread.sleep(1000);
 
             // 查找eWallet 付款方式
             element = driverWait.until(ExpectedConditions.presenceOfElementLocated(By.xpath("//button[@id='displayId_ewallet']")));
@@ -159,7 +73,7 @@ public class XboxGamePass {
             Thread.sleep(500);
 
             // 查找Alipay
-            element = driverWait.until(ExpectedConditions.presenceOfElementLocated(By.xpath("//button[@aria-label='Alipay']")));
+            element = driverWait.until(ExpectedConditions.presenceOfElementLocated(By.xpath("//button[@id='displayId_ewallet_alipay_billing_agreement']")));
 
             // 点击Alipay
             element.click();
@@ -168,7 +82,7 @@ public class XboxGamePass {
 
             // 进入 新增您的支付寶帳戶 页面
             // 查找下一步
-            element = driverWait.until(ExpectedConditions.presenceOfElementLocated(By.xpath("//input[@aria-label='下一步']")));
+            element = driverWait.until(ExpectedConditions.presenceOfElementLocated(By.xpath("//input[@id='pidlddc-button-saveNextButton']")));
 
             // 点击下一步
             element.click();
@@ -182,52 +96,32 @@ public class XboxGamePass {
             // 跳转支付宝
             element.click();
 
-            // 等待新建标签页
-            Thread.sleep(1000);
+            System.out.println("开始登录支付宝");
+            Set<String> windowHandles = driver.getWindowHandles();
+            driver.switchTo().window(windowHandles.toArray()[1].toString());
 
-            // 切换标签页
-            driver.switchTo().defaultContent();
-            driver.switchTo().window(driver.getWindowHandles().stream().toList().get(1));
+            driver.switchTo().frame(driver.findElement(By.xpath("//iframe")));
+            driver.findElement(By.xpath("//a[@title='扫码登录']")).click();
+            driver.findElement(By.xpath("//input[@seed='authcenter-input-account']")).sendKeys(Main.ALIPAY_USER);
+            driver.findElement(By.xpath("//input[@id='password_rsainput']")).sendKeys(Main.ALIPAY_PWD);
 
-            // 查找 支付宝支付密码输入框
-            element = driverWait.until(ExpectedConditions.presenceOfElementLocated(By.xpath("//input[@type='password' and @id='payPassword_rsainput']")));
+            driver.findElement(By.xpath("//input[@type='submit']")).sendKeys(Keys.ENTER);
+            driver.findElement(By.xpath("//input[@id='payPassword_rsainput']")).sendKeys(Main.ALIPAY_KEY);
+            driver.findElement(By.xpath("//button[@type='submit']")).click();
+            driver.findElement(By.xpath("//h2[text()='準備好了嗎？']"));
+            System.out.println("支付宝登录成功");
+            driver.switchTo().parentFrame();
 
-            // 模拟输入
-            for (char c : Main.ALIPAY_KEY.toCharArray()) {
-                int delay = new Random().nextInt(200) + 50;
-                // 模拟输入延迟
-                Thread.sleep(delay);
-
-                // 输入字符
-                element.sendKeys(String.valueOf(c));
-            }
-
-            // 输入回车
-            element.sendKeys(Keys.ENTER);
-
-            // 等待网页完成
-            Thread.sleep(2500);
-
-            // 切换标签页
-            driver.switchTo().window(driver.getWindowHandles().stream().toList().get(0));
-
-            // 切换至iframe
-            driver.switchTo().frame("purchase-sdk-hosted-iframe");
+            driver.switchTo().window(windowHandles.toArray()[0].toString());
+            driver.switchTo().parentFrame();
+            driver.switchTo().frame(driver.findElement(By.xpath("//iframe[@title=\"Purchase Frame\"]")));
 
             // 点击至到绑定成功
             WebDriverWait driverWait1 = new WebDriverWait(driver, Duration.ofSeconds(5));
             do {
                 try {
                     // 查找 繼續
-                    element = driverWait1.until(ExpectedConditions.presenceOfElementLocated(By.xpath("//input[@aria-label='繼續']")));
-                    element.click();
-                } catch (Exception exception) {
-                    exception.printStackTrace();
-                }
-
-                try {
-                    // 查找 繼續
-                    element = driverWait1.until(ExpectedConditions.presenceOfElementLocated(By.xpath("//button[text()='下一步']")));
+                    element = driverWait1.until(ExpectedConditions.presenceOfElementLocated(By.xpath("//input[@id='pidlddc-button-alipayContinueButton']")));
                     element.click();
                 } catch (Exception exception) {
                     exception.printStackTrace();
@@ -239,9 +133,6 @@ public class XboxGamePass {
             // 查找城市
             WebElement city = driverWait.until(ExpectedConditions.presenceOfElementLocated(By.xpath("//input[@id='city']")));
 
-            // 清空城市
-            city.clear();
-
             Thread.sleep(200);
 
             // 输入城市
@@ -252,9 +143,6 @@ public class XboxGamePass {
             // 查找 地址1
             WebElement address = driverWait.until(ExpectedConditions.presenceOfElementLocated(By.xpath("//input[@id='address_line1']")));
 
-            // 清空地址
-            address.clear();
-
             Thread.sleep(200);
 
             // 输入地址
@@ -263,10 +151,12 @@ public class XboxGamePass {
             Thread.sleep(500);
 
             // 查找存储
-            element = driverWait.until(ExpectedConditions.presenceOfElementLocated(By.xpath("//input[@aria-label='儲存']")));
+            element = driverWait.until(ExpectedConditions.presenceOfElementLocated(By.xpath("//input[@value='儲存']")));
 
             // 点击存储
             element.click();
+
+            System.out.println("支付宝付款方式已添加");
 
             // 等待页面加载完成
             Thread.sleep(1500);
@@ -279,9 +169,9 @@ public class XboxGamePass {
 
             // 切出iframe
             driver.switchTo().defaultContent();
+            driver.switchTo().parentFrame();
 
-            // 等待页面刷新完成
-            Thread.sleep(3000);
+            driver.findElement(By.xpath("//p[contains(@class, 'ThankYouPage')]"));
 
             return true;
         } catch (Exception exception) {
